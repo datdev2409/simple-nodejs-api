@@ -40,10 +40,11 @@ phases:
       - echo "=== Post-build Phase ==="
       - echo "Preparing artifacts for S3..."
       - mkdir -p build-artifacts
-      - cp -r app.js package.json package-lock.json Dockerfile docker-compose.yml .dockerignore Makefile build-info.json build-artifacts/
+      - cp -r app.js package.json package-lock.json Dockerfile docker-compose.yml .dockerignore Makefile README.md scripts/ build-info.json build-artifacts/
       - echo "Artifacts prepared"
       - echo "Creating artifact archive..."
       - cd build-artifacts && tar -czf ../simple-nodejs-api.tar.gz . && cd ..
+      - echo "Archive created: simple-nodejs-api.tar.gz"
       - echo "Build completed successfully"
 
 artifacts:

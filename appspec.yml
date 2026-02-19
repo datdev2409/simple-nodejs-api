@@ -1,0 +1,44 @@
+version: 0.0
+
+# AWS CodeDeploy AppSpec for Simple Node.js API
+# Deploys the Docker container to EC2 instance using make commands
+# Works with buildspec.yml artifacts from S3
+
+# Files to deploy to the EC2 instance
+Files:
+  - source: /
+    destination: /opt/simple-nodejs-api
+
+# Set file permissions
+Permissions:
+  - object: /opt/simple-nodejs-api
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+    type:
+      - directory
+      - file
+  - object: /opt/simple-nodejs-api/scripts
+    pattern: "*.sh"
+    owner: ec2-user
+    group: ec2-user
+    mode: 755
+    type:
+      - file
+
+# Lifecycle hooks for deployment
+Hooks:
+  ApplicationStop:
+    - Location: scripts/stop.sh
+      Timeout: 300
+      RunAs: root
+  
+  ApplicationStart:
+    - Location: scripts/start.sh
+      Timeout: 300
+      RunAs: root
+  
+  ValidateService:
+    - Location: scripts/validate.sh
+      Timeout: 900
+      RunAs: root

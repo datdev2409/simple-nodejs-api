@@ -1,0 +1,16 @@
+{
+  "name": "simple-nodejs-api",
+  "version": "1.0.0",
+  "description": "A simple REST API built with Express.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "keywords": ["express", "api", "rest"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "5.2.1"
+  }
+}

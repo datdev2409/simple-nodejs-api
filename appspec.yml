@@ -1,4 +1,5 @@
 version: 0.0
+os: linux
 
 # AWS CodeDeploy AppSpec for Simple Node.js API
 # Deploys the Docker container to EC2 instance using make commands

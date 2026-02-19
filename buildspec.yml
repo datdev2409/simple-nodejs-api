@@ -43,14 +43,13 @@ phases:
       - cp -r app.js package.json package-lock.json Dockerfile docker-compose.yml .dockerignore README.md DOCKER_COMMANDS.md Makefile build-info.json build-artifacts/
       - echo "Artifacts prepared"
       - echo "Creating artifact archive..."
-      - cd build-artifacts && tar -czf ../simple-nodejs-api-$CODEBUILD_BUILD_NUMBER.tar.gz . && cd ..
-      - echo "Archive created: simple-nodejs-api-$CODEBUILD_BUILD_NUMBER.tar.gz"
+      - cd build-artifacts && tar -czf ../simple-nodejs-api.tar.gz . && cd ..
       - echo "Build completed successfully"
 
 artifacts:
   files:
     - build-info.json
-    - simple-nodejs-api-*.tar.gz
+    - simple-nodejs-api.tar.gz
   name: BuildArtifact
   discard-paths: no
 

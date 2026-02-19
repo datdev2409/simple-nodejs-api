@@ -2,6 +2,8 @@
 
 # Variables
 IMAGE_NAME := simple-nodejs-api
+REMOTE_IMAGE := congdat2409/simple-nodejs-api
+REMOTE_TAG ?= latest
 CONTAINER_NAME := simple-api
 PORT := 3000
 
@@ -23,6 +25,10 @@ dev: ## Run in development mode
 # Container Commands
 build: ## Build container image
 	docker build -t $(IMAGE_NAME) .
+
+publish: ## Publish image to Docker Hub
+	docker tag $(IMAGE_NAME) $(REMOTE_IMAGE):$(REMOTE_TAG)
+	docker push $(REMOTE_IMAGE):$(REMOTE_TAG)
 
 run: ## Run container in background
 	docker run -d -p $(PORT):3000 --name $(CONTAINER_NAME) $(IMAGE_NAME)

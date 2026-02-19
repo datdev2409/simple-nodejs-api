@@ -49,25 +49,16 @@ phases:
 
 artifacts:
   files:
+    - build-info.json
     - simple-nodejs-api-*.tar.gz
-    - build-artifacts/**/*
-  name: simple-nodejs-api-build
-  discard-paths: yes
+  name: BuildArtifact
+  discard-paths: no
 
 cache:
   paths:
-    - '/root/.npm/**/*'
-    - 'node_modules/**/*'
-
-reports:
-  build-report:
-    files:
-      - build-info.json
-    file-format: 'JSON'
+    - node_modules/**/*
 
 env:
   variables:
     NODE_ENV: production
     AWS_DEFAULT_REGION: us-east-1
-  parameter-store:
-    AWS_ACCOUNT_ID: /codebuild/aws-account-id

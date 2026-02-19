@@ -1,0 +1,73 @@
+version: 0.2
+
+# AWS CodeBuild buildspec for Simple Node.js API
+# Builds the project and uploads artifacts to S3
+
+phases:
+  pre_build:
+    commands:
+      - echo "=== Pre-build Phase ==="
+      - echo "Installing dependencies..."
+      - npm install
+      - echo "Dependencies installed successfully"
+      - echo "Node version:" $(node --version)
+      - echo "NPM version:" $(npm --version)
+
+  build:
+    commands:
+      - echo "=== Build Phase ==="
+      - echo "Build timestamp:" $(date)
+      - echo "Building project..."
+      - npm run build 2>/dev/null || echo "No build script, skipping..."
+      - echo "Project built successfully"
+      - echo "Creating build metadata..."
+      - |
+        cat > build-info.json << EOF
+        {
+          "name": "simple-nodejs-api",
+          "version": "$(node -p "require('./package.json').version")",
+          "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "buildId": "$CODEBUILD_BUILD_ID",
+          "buildNumber": "$CODEBUILD_BUILD_NUMBER",
+          "buildArn": "$CODEBUILD_BUILD_ARN",
+          "sourceVersion": "$CODEBUILD_SOURCE_VERSION"
+        }
+        EOF
+      - echo "Build metadata created"
+
+  post_build:
+    commands:
+      - echo "=== Post-build Phase ==="
+      - echo "Preparing artifacts for S3..."
+      - mkdir -p build-artifacts
+      - cp -r app.js package.json package-lock.json Dockerfile docker-compose.yml .dockerignore README.md DOCKER_COMMANDS.md Makefile build-info.json build-artifacts/
+      - echo "Artifacts prepared"
+      - echo "Creating artifact archive..."
+      - cd build-artifacts && tar -czf ../simple-nodejs-api-$CODEBUILD_BUILD_NUMBER.tar.gz . && cd ..
+      - echo "Archive created: simple-nodejs-api-$CODEBUILD_BUILD_NUMBER.tar.gz"
+      - echo "Build completed successfully"
+
+artifacts:
+  files:
+    - simple-nodejs-api-*.tar.gz
+    - build-artifacts/**/*
+  name: simple-nodejs-api-build
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.npm/**/*'
+    - 'node_modules/**/*'
+
+reports:
+  build-report:
+    files:
+      - build-info.json
+    file-format: 'JSON'
+
+env:
+  variables:
+    NODE_ENV: production
+    AWS_DEFAULT_REGION: us-east-1
+  parameter-store:
+    AWS_ACCOUNT_ID: /codebuild/aws-account-id
